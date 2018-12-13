@@ -18,7 +18,7 @@ class Connect extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      reduxProps: store.getState(),
+      reduxProps: {},
       storeState: {}
     }
     this.getReduxProps = this.getReduxProps.bind(this);
@@ -35,26 +35,23 @@ class Connect extends Component {
     if (mstp) readProps = mstp(nextState);
     let writeProps = {};
     if (mdtp) writeProps = mdtp(store.dispatch);
-    const reduxProps = Object.assign(this.state.reduxProps, readProps, writeProps);
+    const reduxProps = Object.assign({}, readProps, writeProps);
     this.setState({ reduxProps });
     return reduxProps;
   }
 
   render() {
-    const childProps = Object.assign({}, this.props);
+    const newProps = this.props.newProps || {};
+    const childProps = Object.assign({}, newProps, this.props);
     delete childProps["childComp"];
     delete childProps["mstp"];
     delete childProps["mdtp"];
     const reduxProps = this.state.reduxProps;
-    console.log(this.state.reduxProps)
     const allProps = Object.assign({}, childProps, reduxProps);
-    const { childComp: Component } = this.props;
+    const { Component } = this.props;
     return <Component {...allProps} />;
   }
 }
 
 export const connect = (mstp, mdtp) => 
-  (Component) => <Connect childComp={Component} mstp={mstp} mdtp={mdtp} />;
-
-
-
+  Component => newProps => <Connect Component={Component} mstp={mstp} mdtp={mdtp} newProps={newProps} />;

@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/andywynkoop/react-redux-lite/issues"
   },
-  "homepage": "https://github.com/andywynkoop/react-redux-lite#readme"
+  "homepage": "https://github.com/andywynkoop/react-redux-lite#readme",
+  "dependencies": {
+    "react-lite": "file:../ReactLite"
+  }
 }
