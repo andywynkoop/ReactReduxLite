@@ -17,37 +17,34 @@ export class Provider extends Component {
 class Connect extends Component {
   constructor(props) {
     super(props);
+    const _store = store.getState();
     this.state = {
-      reduxProps: {},
-      storeState: {}
+      store: _store
     }
-    this.getReduxProps = this.getReduxProps.bind(this);
-  }
-  
-  componentDidMount() {
-    store.subscribe(this.getReduxProps);
-    this.getReduxProps(store.getState());
+    store.subscribe(this.setReduxState.bind(this));
   }
 
-  getReduxProps(nextState) {
-    const { mstp, mdtp } = this.props;
-    let readProps = {};
-    if (mstp) readProps = mstp(nextState);
-    let writeProps = {};
-    if (mdtp) writeProps = mdtp(store.dispatch);
-    const reduxProps = Object.assign({}, readProps, writeProps);
-    this.setState({ reduxProps });
-    return reduxProps;
+  setReduxState(nextState) {
+    this.setState({ store: nextState });
   }
 
   render() {
     const newProps = this.props.newProps || {};
     const childProps = Object.assign({}, newProps, this.props);
-    delete childProps["childComp"];
-    delete childProps["mstp"];
-    delete childProps["mdtp"];
-    const reduxProps = this.state.reduxProps;
-    const allProps = Object.assign({}, childProps, reduxProps);
+    
+    const { mstp, mdtp } = this.props;
+    let readProps = {};
+    if (mstp) readProps = mstp(this.state.store);
+    let writeProps = {};
+    if (mdtp) writeProps = mdtp(store.dispatch);
+    
+    const allProps = Object.assign({}, childProps, readProps, writeProps);
+    
+    delete allProps["childComp"];
+    delete allProps["mstp"];
+    delete allProps["mdtp"];
+    delete allProps["Component"];
+    delete allProps["newProps"];
     const { Component } = this.props;
     return <Component {...allProps} />;
   }
