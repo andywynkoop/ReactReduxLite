@@ -34,7 +34,7 @@ class Connect extends Component {
     
     const { mstp, mdtp } = this.props;
     let readProps = {};
-    if (mstp) readProps = mstp(this.state.store);
+    if (mstp) readProps = mstp(this.state.store, newProps);
     let writeProps = {};
     if (mdtp) writeProps = mdtp(store.dispatch);
     
